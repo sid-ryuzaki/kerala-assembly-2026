@@ -68,9 +68,9 @@ export const parsePartyResults = (htmlString) => {
     }
   }
   
-  // Sort by total descending and take top 5
+  // Sort by total descending and return all
   results.sort((a, b) => b.total - a.total);
-  return results.slice(0, 5);
+  return results;
 };
 
 export const parseConstituencyResults = (htmlString) => {

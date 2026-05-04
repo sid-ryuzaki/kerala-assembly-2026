@@ -4,37 +4,16 @@ import { RefreshCw, TrendingUp } from 'lucide-react';
 
 const OVERALL_URL = 'https://results.eci.gov.in/ResultAcGenMay2026/partywiseresult-S11.htm';
 
-export default function OverallResults() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const html = await fetchHtml(OVERALL_URL);
-      const parsedData = parsePartyResults(html);
-      setData(parsedData);
-    } catch (err) {
-      console.error(err);
-      setError('Failed to fetch overall results');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function OverallResults({ data, loading, error, onRefresh }) {
   const maxTotal = data.length > 0 ? Math.max(...data.map(d => d.total)) : 100;
+  // We only show top 5 here as requested
+  const displayData = data.slice(0, 5);
 
   return (
     <div className="glass-panel">
       <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
         <h2><TrendingUp size={24} className="text-accent" /> Kerala Overall Assembly Status</h2>
-        <button className={`btn-refresh ${loading ? 'loading' : ''}`} onClick={loadData} disabled={loading}>
+        <button className={`btn-refresh ${loading ? 'loading' : ''}`} onClick={onRefresh} disabled={loading}>
           <RefreshCw size={16} />
         </button>
       </div>
@@ -43,7 +22,7 @@ export default function OverallResults() {
         <div className="text-danger flex-center" style={{ height: '200px' }}>
           <p>{error}</p>
         </div>
-      ) : loading && data.length === 0 ? (
+      ) : loading && displayData.length === 0 ? (
         <div>
           {[...Array(5)].map((_, i) => (
              <div key={i} className="skeleton-row"></div>
@@ -61,7 +40,7 @@ export default function OverallResults() {
               </tr>
             </thead>
             <tbody>
-              {data.map((party, index) => (
+              {displayData.map((party, index) => (
                 <tr key={index}>
                   <td>
                     <strong>{party.party}</strong>

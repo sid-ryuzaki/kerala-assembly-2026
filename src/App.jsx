@@ -1,20 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import OverallResults from './components/OverallResults';
 import ConstituencyResults from './components/ConstituencyResults';
+import AllianceTally from './components/AllianceTally';
+import { fetchHtml, parsePartyResults } from './utils/fetchData';
 import { Activity, Clock } from 'lucide-react';
+
+const OVERALL_URL = 'https://results.eci.gov.in/ResultAcGenMay2026/partywiseresult-S11.htm';
 
 function App() {
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
+  const [overallData, setOverallData] = useState([]);
+  const [overallLoading, setOverallLoading] = useState(true);
+  const [overallError, setOverallError] = useState(null);
+
+  const loadOverallData = async () => {
+    setOverallLoading(true);
+    setOverallError(null);
+    try {
+      const html = await fetchHtml(OVERALL_URL);
+      const parsedData = parsePartyResults(html);
+      setOverallData(parsedData);
+      setLastRefreshed(new Date());
+    } catch (err) {
+      console.error(err);
+      setOverallError('Failed to fetch overall results');
+    } finally {
+      setOverallLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadOverallData();
+  }, []);
 
   // Auto-refresh every 60 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      // The individual components handle their own data fetching, 
-      // but we can update the global refresh time here.
-      // To force a re-render/re-fetch of children, we could use a key or state trigger.
+      loadOverallData();
+      // ConstituencyResults will handle its own refresh via key trick or we can trigger it
       setLastRefreshed(new Date());
     }, 60000);
-    
     return () => clearInterval(interval);
   }, []);
 
@@ -31,9 +56,17 @@ function App() {
         </div>
       </header>
 
-      <main className="layout-grid">
+      <main className="layout-grid" style={{ paddingTop: '1.5rem' }}>
+        <div style={{ gridColumn: '1 / -1' }}>
+          <AllianceTally data={overallData} loading={overallLoading} />
+        </div>
         <section>
-          <OverallResults key={lastRefreshed.getTime()} />
+          <OverallResults 
+            data={overallData} 
+            loading={overallLoading} 
+            error={overallError} 
+            onRefresh={loadOverallData} 
+          />
         </section>
         <section>
           <ConstituencyResults key={lastRefreshed.getTime() + 1} />
