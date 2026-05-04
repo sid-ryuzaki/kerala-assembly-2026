@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-// We use ScraperAPI in production to bypass WAF, and fallback to corsproxy for local if no key is present.
+// We use the custom Vercel Serverless Function to bypass WAF in production
+// and fallback to corsproxy for local development.
 const getProxyUrl = (targetUrl) => {
-  const apiKey = import.meta.env.VITE_SCRAPER_API_KEY;
-  if (apiKey && apiKey !== 'your_api_key_here') {
-    return `http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(targetUrl)}&render=true`;
+  if (import.meta.env.PROD) {
+    return `/api/scrape?url=${encodeURIComponent(targetUrl)}`;
   }
   return `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 };
