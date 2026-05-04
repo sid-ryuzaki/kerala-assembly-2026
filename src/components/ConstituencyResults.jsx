@@ -5,7 +5,8 @@ import { RefreshCw, MapPin, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 const CONSTITUENCIES = [
   { name: 'Vattiyoorkavu', url: 'https://results.eci.gov.in/ResultAcGenMay2026/ConstituencywiseS11133.htm' },
   { name: 'Nemom', url: 'https://results.eci.gov.in/ResultAcGenMay2026/ConstituencywiseS11135.htm' },
-  { name: 'Dharmadam', url: 'https://results.eci.gov.in/ResultAcGenMay2026/ConstituencywiseS1112.htm' }
+  { name: 'Dharmadam', url: 'https://results.eci.gov.in/ResultAcGenMay2026/ConstituencywiseS1112.htm' },
+  { name: 'Kazhakootam', url: 'https://results.eci.gov.in/ResultAcGenMay2026/ConstituencywiseS11132.htm' }
 ];
 
 export default function ConstituencyResults() {
