@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// To bypass CORS and WAF, we use a proxy service. 
-// If this proxy is blocked, try another one or run a local proxy.
-const CORS_PROXY = 'http://localhost:3001/scrape?url=';
+// We use corsproxy.io to bypass CORS issues on the client side.
+const CORS_PROXY = 'https://corsproxy.io/?';
 
 export const fetchHtml = async (url) => {
   try {

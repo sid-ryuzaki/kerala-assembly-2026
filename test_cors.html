@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+  fetch('https://corsproxy.io/?' + encodeURIComponent('https://results.eci.gov.in/ResultAcGenMay2026/partywiseresult-S11.htm'))
+    .then(res => res.text())
+    .then(data => {
+      document.body.innerText = "SUCCESS: " + data.substring(0, 500);
+      console.log(data);
+    })
+    .catch(err => {
+      document.body.innerText = "ERROR: " + err;
+    });
+</script>
+</body>
+</html>
