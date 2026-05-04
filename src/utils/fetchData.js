@@ -1,12 +1,18 @@
 import axios from 'axios';
 
-// We use corsproxy.io to bypass CORS issues on the client side.
-const CORS_PROXY = 'https://corsproxy.io/?';
+// We use ScraperAPI in production to bypass WAF, and fallback to corsproxy for local if no key is present.
+const getProxyUrl = (targetUrl) => {
+  const apiKey = import.meta.env.VITE_SCRAPER_API_KEY;
+  if (apiKey && apiKey !== 'your_api_key_here') {
+    return `http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(targetUrl)}&render=true`;
+  }
+  return `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+};
 
 export const fetchHtml = async (url) => {
   try {
-    const response = await axios.get(`${CORS_PROXY}${encodeURIComponent(url)}`, {
-      timeout: 10000,
+    const response = await axios.get(getProxyUrl(url), {
+      timeout: 15000,
     });
     return response.data;
   } catch (error) {
